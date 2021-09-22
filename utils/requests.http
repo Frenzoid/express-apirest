@@ -1,15 +1,19 @@
 
 ### Install REST Client vscode extension to use this file.
 
-### Users requests.
-GET http://localhost:3001/api/users/
+### Register.
+POST http://localhost:3001/api/auth/register
 Content-Type: application/json
 
-{}
+{
+    "name":"frenzoid",
+    "email":"frenzoid@pm.me",
+    "password":"saltmecheff"
+}
 
 
-### Items requests.
-GET http://localhost:3001/api/items/
+### Get all Users.
+GET http://localhost:3001/api/users/
 Content-Type: application/json
 
 {}

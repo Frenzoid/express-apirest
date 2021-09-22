@@ -19,10 +19,10 @@ const { PORT, BPMBLIMIT, LOGLVL } = require('./config/general.js');
 
 // We grab our database connector and tables generator.
 const sequelize = require("./config/database.js");
-const { createTablesFromModels } = require("./models/modMaganaer.js");
+const { createTablesFromModels } = require("./models/modelsManager.js");
 
 // We grab our helpers
-const sessionManager = require('./helpers/session')
+const { jwtMiddleware } = require('./helpers/session')
 
 // We grab our routers.
 const Routers = require('./routers/masterRouter.js');
@@ -53,8 +53,8 @@ app.get('/api', (_, res) => {
 
 // Our route routers.
 app.use('/api/auth', Routers.auth);
-app.use('/api/users', sessionManager.jwtMiddleware, Routers.user);
-app.use('/api/items', sessionManager.jwtMiddleware, Routers.item);
+app.use('/api/users', jwtMiddleware, Routers.user);
+app.use('/api/items', jwtMiddleware, Routers.item);
 
 
 // Once the connection to the database is done, we start the server! :D

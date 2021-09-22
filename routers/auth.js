@@ -27,8 +27,8 @@ async function postRegister(req, res, next) {
 }
 
 
-router.get('/login', postLogin);
-router.get('/register', postRegister);
+router.post('/login', postLogin);
+router.post('/register', postRegister);
 
 
 module.exports = router
