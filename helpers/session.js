@@ -17,8 +17,8 @@ function jwtVerify(tokenBeared) {
     if (tokenBeared)
         headerParts = tokenBeared.split(' ');
 
-    if (headerParts.length !== 2 || headerParts[0] !== 'Bearer') {
-        return res.boom.unauthorized('Invalid authorization header');
+    if (!tokenBeared || headerParts.length !== 2 || headerParts[0] !== 'Bearer') {
+        return false;
     }
 
     const token = headerParts[1];
@@ -37,10 +37,11 @@ function jwtVerify(tokenBeared) {
 // JWT middlewate to check token integrity.
 function jwtMiddleware(req, res, next) {
     const tokenHeader = req.headers.authorization;
+
     const payload = jwtVerify(tokenHeader);
 
     if (!payload)
-        res.boom.unauthorized('Invalid token.')
+        return res.boom.unauthorized('Invalid token.')
 
     // If everything is good, save the user for its use in other middlewares and set header with a refreshed token.
     let token = jwtGenerate(payload, '1h');

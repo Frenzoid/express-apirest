@@ -2,7 +2,7 @@
  * @author MrFrenzoid
  */
 
-// Force strict mode-
+// Force strict mode.
 'use strict';
 
 // We grab our libraries.
@@ -15,7 +15,11 @@ const cors = require('cors');
 
 
 // We grab the configuration items we need.
-const Config = require('./config/general.js');
+const { PORT, BPMBLIMIT, LOGLVL } = require('./config/general.js');
+
+// We grab our database connector and tables generator.
+const sequelize = require("./config/database.js");
+const { createTablesFromModels } = require("./models/modMaganaer.js");
 
 // We grab our helpers
 const sessionManager = require('./helpers/session')
@@ -31,11 +35,11 @@ const app = express();
 app.use(boom());
 
 // Body parser configuration
-app.use(bparser.json({ limit: Config.BPMBLIMIT }));
+app.use(bparser.json({ limit: BPMBLIMIT }));
 app.use(bparser.urlencoded({ extended: true }));
 
 // Logger to console.
-app.use(logger(Config.LOGLVL));
+app.use(logger(LOGLVL));
 
 // Enable cors
 app.use(cors())
@@ -49,11 +53,25 @@ app.get('/api', (_, res) => {
 
 // Our route routers.
 app.use('/api/auth', Routers.auth);
-app.use('/api/users', sessionManager.jwtVerify, Routers.user);
-app.use('/api/items', sessionManager.jwtVerify, Routers.item);
+app.use('/api/users', sessionManager.jwtMiddleware, Routers.user);
+app.use('/api/items', sessionManager.jwtMiddleware, Routers.item);
 
 
-// And we start the server! :D
-app.listen(Config.PORT, () => {
-    console.info(`Express server listening on port ${Config.PORT}`);
-});
+// Once the connection to the database is done, we start the server! :D
+try {
+    (async () => {
+
+        await sequelize.authenticate();
+        console.log('Connection with the database has been established successfully.');
+
+        // Create all tables from models.
+        createTablesFromModels();
+
+        app.listen(PORT, () => {
+            console.info(`Express server listening on port ${PORT}`);
+        });
+
+    })();
+} catch (error) {
+    console.error('Unable to connect to the database:', error);
+}
