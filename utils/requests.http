@@ -1,0 +1,15 @@
+
+### Install REST Client vscode extension to use this file.
+
+### Users requests.
+GET http://localhost:3001/api/users/
+Content-Type: application/json
+
+{}
+
+
+### Items requests.
+GET http://localhost:3001/api/items/
+Content-Type: application/json
+
+{}
