@@ -1,6 +1,13 @@
+/**
+ * User model.
+ */
 const Sequelize = require('sequelize');
 const sequelize = require('../config/database');
 const bcrypt = require('bcrypt');
+
+const { SALTLVL } = require('../config/general.js');
+
+const Item = require('./item');
 
 const User = sequelize.define('user', {
     id: {
@@ -15,7 +22,8 @@ const User = sequelize.define('user', {
     },
     email: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     password: {
         type: Sequelize.STRING,
@@ -26,12 +34,12 @@ const User = sequelize.define('user', {
 
 // Before each insert or update..
 User.beforeCreate(async (user) => {
-    const salt = bcrypt.genSaltSync(8);
+    const salt = bcrypt.genSaltSync(SALTLVL);
     user.password = bcrypt.hashSync(user.password, salt);
 });
 
 User.beforeUpdate(async (user) => {
-    const salt = bcrypt.genSaltSync(8);
+    const salt = bcrypt.genSaltSync(SALTLVL);
     user.password = bcrypt.hashSync(user.password, salt);
 });
 

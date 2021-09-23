@@ -8,7 +8,7 @@ const authController = require('../controllers/auth.js');
 
 async function postLogin(req, res, next) {
     try {
-        return await authController.postLogin(req, res, next);
+        return await authController.login(req, res, next);
     }
     catch (err) {
         console.error(err)
@@ -18,11 +18,11 @@ async function postLogin(req, res, next) {
 
 async function postRegister(req, res, next) {
     try {
-        return await authController.postRegister(req, res, next);
+        return await authController.register(req, res, next);
     }
     catch (err) {
         console.error(err)
-        return res.boom.badImplementation();
+        return res.boom.badImplementation(err);
     }
 }
 

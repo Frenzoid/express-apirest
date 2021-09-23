@@ -8,7 +8,7 @@ const userController = require('../controllers/user.js');
 
 async function getUsers(req, res, next) {
     try {
-        return await userController.getUsers(req, res, next);
+        return await userController.getAllUsers(req, res, next);
     }
     catch (err) {
         console.error(err)
@@ -18,7 +18,7 @@ async function getUsers(req, res, next) {
 
 async function getUser(req, res, next) {
     try {
-        return await userController.getUser(req, res, next);
+        return await userController.getUserByName(req, res, next);
     }
     catch (err) {
         console.error(err)
@@ -27,7 +27,18 @@ async function getUser(req, res, next) {
 }
 
 
+async function getCurrentUser(req, res, next) {
+    try {
+        return await userController.getCurrentUser(req, res, next);
+    }
+    catch (err) {
+        console.error(err)
+        return res.boom.badImplementation();
+    }
+}
+
 router.get('/', getUsers);
+router.get('/current', getCurrentUser);
 router.get('/:name', getUser);
 
 

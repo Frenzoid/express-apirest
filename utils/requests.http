@@ -11,9 +11,43 @@ Content-Type: application/json
     "password":"saltmecheff"
 }
 
-
-### Get all Users.
-GET http://localhost:3001/api/users/
+### Login.
+POST http://localhost:3001/api/auth/login
 Content-Type: application/json
 
+
+{
+    "email":"frenzoid@pm.me",
+    "password":"saltmecheff"
+}
+
+
+
+
+### Get all users.
+GET http://localhost:3001/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjM3NTEzNSwiZXhwIjoxNjMyMzc4NzM1fQ.6PYNSWo2BOKNItCUu7BwYC6a83aJfGQGR7LNvInnfkU
+
 {}
+
+### Get one user.
+GET http://localhost:3001/api/users/frenzoid
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjM3NjIxMCwiZXhwIjoxNjMyMzc5ODEwfQ.AGkP2kFHxr8T3BuA_gUUue-75RDvPaeFCu1qCpZmZl8
+
+{}
+
+### Get current user (identified by token payload).
+GET http://localhost:3001/api/users/current
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjM3NjIxMCwiZXhwIjoxNjMyMzc5ODEwfQ.AGkP2kFHxr8T3BuA_gUUue-75RDvPaeFCu1qCpZmZl8
+
+{}
+
+
+
+### Get all Items.
+
+
+### Get one Item.

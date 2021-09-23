@@ -9,17 +9,16 @@
 require('dotenv').config({ path: './utils/.env' });
 const express = require('express');
 const boom = require('express-boom');
-const bparser = require('body-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
 
 // We grab the configuration items we need.
-const { PORT, BPMBLIMIT, LOGLVL } = require('./config/general.js');
+const { PORT, BPMBLIMIT, LOGGERLVL } = require('./config/general.js');
 
 // We grab our database connector and tables generator.
 const sequelize = require("./config/database.js");
-const { createTablesFromModels } = require("./models/modelsManager.js");
+const { createTablesFromModels, issueRelations } = require("./models/modelsManager.js");
 
 // We grab our helpers
 const { jwtMiddleware } = require('./helpers/session')
@@ -35,11 +34,11 @@ const app = express();
 app.use(boom());
 
 // Body parser configuration
-app.use(bparser.json({ limit: BPMBLIMIT }));
-app.use(bparser.urlencoded({ extended: true }));
+app.use(express.json({ limit: BPMBLIMIT }));
+app.use(express.urlencoded({ extended: true }));
 
 // Logger to console.
-app.use(logger(LOGLVL));
+app.use(logger(LOGGERLVL));
 
 // Enable cors
 app.use(cors())
@@ -64,7 +63,8 @@ try {
         await sequelize.authenticate();
         console.log('Connection with the database has been established successfully.');
 
-        // Create all tables from models.
+        // We do what we need to finish setting up the database.
+        issueRelations();
         createTablesFromModels();
 
         app.listen(PORT, () => {
