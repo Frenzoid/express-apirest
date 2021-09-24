@@ -5,49 +5,58 @@ const { JWTSECRET, JWTEXPIRE } = require('../config/general.js');
 const JWT = require('jsonwebtoken');
 
 // Generates a new token.
-function jwtGenerate(payload, expirationTime) {
-    return JWT.sign(payload, JWTSECRET, { expiresIn: expirationTime });
+function jwtGenerate(payload) {
+
+    // returns a JWT.
+    return JWT.sign(payload, JWTSECRET, { expiresIn: JWTEXPIRE });
 }
 
 // Bears a token.
 function jwtBearToken(token) {
     if (!token)
-        return false
+        return false;
 
     return "Bearer " + token;
 }
 
-// Unbears a token, leaving purely the token.
+// Unbears a token, returning both parts of the token.
 function jwtUnbearToken(token) {
     if (!token)
-        return false
+        return false;
 
-    let headerParts = token.split(' ');
+    // parts = ["Bearer", "JWT"]
+    let parts = token.split(' ');
 
-    return headerParts;
+    return parts;
 }
 
 // Generates a token and bears it.
-function jwtGenerateBeared(token, expireDate) {
-    return jwtBearToken(jwtGenerate(token, expireDate))
+function jwtGenerateBeared(payload) {
+
+    // returns a "Bearer JWT"
+    return jwtBearToken(jwtGenerate(payload))
 }
 
 // Verifies the current token integrity.
 function jwtVerify(tokenBeared) {
 
-    let headerParts = jwtUnbearToken(tokenBeared);
+    let parts = jwtUnbearToken(tokenBeared);
 
-    if (!headerParts || headerParts.length !== 2 || headerParts[0] !== 'Bearer') {
+    // Check if the parts are correct.
+    if (!parts || parts.length !== 2 || parts[0] !== 'Bearer') {
         return false;
     }
 
-    const token = headerParts[1];
+    // Strip token from parts.
+    const token = parts[1];
 
-    // Verify secret and check token expiration.
+    // Verifies token integrity and checks token expiration, returns payload or throws an error.
     return JWT.verify(token, JWTSECRET, (error, payload) => {
 
-        if (error)
-            return false;
+        if (error && error.name === 'TokenExpiredError')
+            throw 'Token expired'
+        else if (error)
+            throw 'generic error';
 
         return payload;
 
@@ -57,17 +66,23 @@ function jwtVerify(tokenBeared) {
 // JWT middlewate to check token integrity, and refresh it.
 function jwtMiddleware(req, res, next) {
     const tokenHeader = req.header('Authorization');
+    let payload;
 
-    const payload = jwtVerify(tokenHeader);
+    // Verifies token, returns payload or throws error.
+    try {
+        payload = jwtVerify(tokenHeader);
+    } catch (err) {
+        if (err == 'Token expired')
+            return res.boom.unauthorized('JWT token expired.');
 
-    if (!payload)
-        return res.boom.unauthorized('Invalid token.')
+        return res.boom.unauthorized('Invalid Token.');
+    }
 
-    // If everything is good, save the user for its use in other middlewares and set header with a refreshed token.
-    let token = jwtGenerate({ userid: payload.userid }, JWTEXPIRE);
-    const tokenBeared = jwtBearToken(token);
+    // If everything is good, generate a new token, with the payload (current session user id)
+    const token = jwtGenerateBeared({ userid: payload.userid });
 
-    res.set('Authorization', tokenBeared);
+    // Save the payload for its later use in endpoints if needed and set header with a refreshed token.
+    res.set('Authorization', token);
     req.jwtpayload = payload;
 
     next();

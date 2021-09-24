@@ -1,6 +1,24 @@
 
 ### Install REST Client vscode extension to use this file.
 
+
+### test endpoint | check if the api works.
+
+GET http://localhost:3001/api
+Content-Type: application/json
+
+{}
+
+### test endpoint | check error codes and format.
+
+GET http://localhost:3001/api/error
+Content-Type: application/json
+
+{}
+
+
+
+
 ### Register.
 POST http://localhost:3001/api/auth/register
 Content-Type: application/json
@@ -27,7 +45,7 @@ Content-Type: application/json
 ### Get all users.
 GET http://localhost:3001/api/users
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjM3NTEzNSwiZXhwIjoxNjMyMzc4NzM1fQ.6PYNSWo2BOKNItCUu7BwYC6a83aJfGQGR7LNvInnfkU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjQ2MTkxNiwiZXhwIjoxNjMyNDYxOTIwfQ.GsDO7sffP2b3im2JrAPeiKVQGM4hQAmqCKff27ZP14k
 
 {}
 
@@ -41,13 +59,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhd
 ### Get current user (identified by token payload).
 GET http://localhost:3001/api/users/current
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjM3NjIxMCwiZXhwIjoxNjMyMzc5ODEwfQ.AGkP2kFHxr8T3BuA_gUUue-75RDvPaeFCu1qCpZmZl8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTYzMjQ2NzU4NCwiZXhwIjoxNjMyNDcxMTg0fQ.61Pd2u1eHy88lNQ4OEhf-uAapQKkATUh8jw9dtlSRYw
 
 {}
 
 
 
 ### Get all Items.
+### Do it yourself, the endpoint is already made.
 
 
 ### Get one Item.
+### Do it yourself, the endpoint is already made.
+
+
+### Add existing Item to current User.
+### Do it yourself, the endpoint is already made.

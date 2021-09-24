@@ -26,9 +26,19 @@ async function getItem(req, res, next) {
     }
 }
 
+async function postItemToCurrentUser(req, res, next) {
+    try {
+        return await itemController.addItemToCurrentUser(req, res, next);
+    }
+    catch (err) {
+        console.error(err)
+        return res.boom.badImplementation();
+    }
+}
 
 router.get('/', getItems);
 router.get('/:id', getItem);
+router.post('/', postItemToCurrentUser);
 
 
 module.exports = router

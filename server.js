@@ -14,7 +14,7 @@ const cors = require('cors');
 
 
 // We grab the configuration items we need.
-const { PORT, BPMBLIMIT, LOGGERLVL } = require('./config/general.js');
+const { PORT, BPMBLIMIT, LOGGERLVL, DBHOST, DBNAME, DBUSER, DBDIAL } = require('./config/general.js');
 
 // We grab our database connector and tables generator.
 const sequelize = require("./config/database.js");
@@ -44,31 +44,44 @@ app.use(logger(LOGGERLVL));
 app.use(cors())
 
 
-// A default endpoint (you can remove this, used to check if the apirest works).
+// A default testing endpoint (you can remove this, used to check if the apirest works).
 app.get('/api', (_, res) => {
-    res.status(200).send('API works.');
+    return res.send('API works.');
+});
+
+// A default testing endpoint (you can remove this, used to check if the apirest works).
+app.get('/api/error', (_, res) => {
+    let cat = "https://http.cat/502";
+    res.boom.badGateway(null, { cat });
 });
 
 
 // Our route routers.
+// jwtMiddleware is a middleware that we manually made to check for jwt tokens and auto refesh them.
 app.use('/api/auth', Routers.auth);
 app.use('/api/users', jwtMiddleware, Routers.user);
 app.use('/api/items', jwtMiddleware, Routers.item);
 
 
-// Once the connection to the database is done, we start the server! :D
+// Connect with the database, and start express server :D
 try {
+
+    // This is dirty, but its the only way to run async code at top level.
     (async () => {
 
         await sequelize.authenticate();
-        console.log('Connection with the database has been established successfully.');
+        console.log(`Sequelize: Successuflly authenticated to: ${DBUSER}@${DBHOST}/${DBNAME}, with dialect: ${DBDIAL}.`);
 
         // We do what we need to finish setting up the database.
+        // issue relations on our migration.
         issueRelations();
+
+        // issue transaction, creating tables from models.
         createTablesFromModels();
 
+        // Start express server.
         app.listen(PORT, () => {
-            console.info(`Express server listening on port ${PORT}`);
+            console.info(`Express: Server listening on port ${PORT}.`);
         });
 
     })();

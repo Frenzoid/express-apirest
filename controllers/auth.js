@@ -1,5 +1,4 @@
 const { jwtGenerateBeared } = require("../helpers/session");
-const { JWTEXPIRE } = require("../config/general.js");
 
 const User = require("../models/user");
 const Item = require("../models/item");
@@ -26,7 +25,7 @@ async function login(req, res) {
 
 
     delete user.dataValues.password;
-    res.set('Authorization', jwtGenerateBeared({ userid: user.id }, JWTEXPIRE));
+    res.set('Authorization', jwtGenerateBeared({ userid: user.id }));
     return res.json(user);
 }
 
@@ -46,13 +45,21 @@ async function register(req, res) {
         return res.boom.badRequest(err);
     }
 
-    const item = await Item.create({ name: "Master key.", description: "A master key for the mansion." })
-    await user.addItem(item);
+    // Example of associating one model to another in a M:1 relation.
+    // const item = await Item.create({ name: "Master key.", description: "A master key of the mansion." })
+    // await user.addItem(item);
 
+    // Find the user again, populating the previously added item.
+    // user = await User.findByPk(user.id, { include: [{ model: Item }] });
+
+
+    // Or you can also do directly:
+    // This one creates a new item, and associates it to a user, returning the created item.
+    await user.createItem({ name: "Master key.", description: "A master key of the mansion." });
     user = await User.findByPk(user.id, { include: [{ model: Item }] });
 
     delete user.dataValues.password;
-    res.set('Authorization', jwtGenerateBeared({ userid: user.id }, JWTEXPIRE));
+    res.set('Authorization', jwtGenerateBeared({ userid: user.id }));
     return res.json(user);
 }
 
