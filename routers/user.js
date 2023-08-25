@@ -4,42 +4,14 @@
 const express = require('express');
 const router = express.Router();
 
-const userController = require('../controllers/user.js');
-
-async function getUsers(req, res, next) {
-    try {
-        return await userController.getAllUsers(req, res, next);
-    }
-    catch (err) {
-        console.error(err)
-        return res.boom.badImplementation();
-    }
-}
-
-async function getUser(req, res, next) {
-    try {
-        return await userController.getUserByName(req, res, next);
-    }
-    catch (err) {
-        console.error(err)
-        return res.boom.badImplementation();
-    }
-}
+const { errorHandler } = require("../helpers/functions")
+const { getAllUsers, getUserByName, getCurrentUser } = require('../controllers/user.js');
 
 
-async function getCurrentUser(req, res, next) {
-    try {
-        return await userController.getCurrentUser(req, res, next);
-    }
-    catch (err) {
-        console.error(err)
-        return res.boom.badImplementation();
-    }
-}
 
-router.get('/', getUsers);
-router.get('/current', getCurrentUser);
-router.get('/:name', getUser);
+router.get('/', errorHandler(getAllUsers));
+router.get('/current', errorHandler(getCurrentUser));
+router.get('/:name', errorHandler(getUserByName));
 
 
 module.exports = router

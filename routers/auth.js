@@ -4,31 +4,15 @@
 const express = require('express');
 const router = express.Router();
 
-const authController = require('../controllers/auth.js');
-
-async function postLogin(req, res, next) {
-    try {
-        return await authController.login(req, res, next);
-    }
-    catch (err) {
-        console.error(err)
-        return res.boom.badImplementation();
-    }
-}
-
-async function postRegister(req, res, next) {
-    try {
-        return await authController.register(req, res, next);
-    }
-    catch (err) {
-        console.error(err)
-        return res.boom.badImplementation(err);
-    }
-}
+const { errorHandler } = require("../helpers/functions")
+const { login, register } = require('../controllers/auth.js');
 
 
-router.post('/login', postLogin);
-router.post('/register', postRegister);
+
+
+
+router.post('/login', errorHandler(login));
+router.post('/register', errorHandler(register));
 
 
 module.exports = router
